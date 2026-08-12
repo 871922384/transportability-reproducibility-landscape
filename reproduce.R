@@ -63,6 +63,13 @@ if (length(unique(primary$pair_id)) != 83L ||
     any(table(primary$pair_id) != 13L) || any(primary$primary_state != primary$final_state)) {
   fail("Primary layer is not an exact 83 by 13 grid.")
 }
+pair_all_unresolved <- tapply(
+  primary$final_state == "unresolved", primary$pair_id, all
+)
+full_text_pair_ids <- names(pair_all_unresolved)[!pair_all_unresolved]
+if (length(full_text_pair_ids) != 62L) {
+  fail("Expected 62 pairs with at least one resolved primary state.")
+}
 registered <- data[data$analysis_layer == "registered_human_20", , drop = FALSE]
 additional <- data[data$analysis_layer == "additional_human_24", , drop = FALSE]
 if (length(unique(registered$pair_id)) != 20L || any(table(registered$pair_id) != 13L)) {
@@ -90,6 +97,9 @@ for (i in seq_along(field_order)) {
   field <- field_order[[i]]
   states <- allowed[[field]]
   values <- primary$final_state[primary$field_id == field]
+  full_text_values <- primary$final_state[
+    primary$field_id == field & primary$pair_id %in% full_text_pair_ids
+  ]
   applicable <- !values %in% c("not_applicable", "unresolved")
   applicable_n <- sum(applicable)
   for (j in seq_along(states)) {
@@ -100,6 +110,9 @@ for (i in seq_along(field_order)) {
       state_order = j, state = state, n = n, total_n = length(values),
       total_pct = n / length(values), applicable_n = applicable_n,
       applicable_pct = if (state %in% c("not_applicable", "unresolved") || applicable_n == 0L) NA_real_ else n / applicable_n,
+      full_text_n = sum(full_text_values == state),
+      full_text_total_n = length(full_text_values),
+      full_text_pct = mean(full_text_values == state),
       stringsAsFactors = FALSE, check.names = FALSE
     )
   }
@@ -198,6 +211,7 @@ graphics::text(seq_along(analytic), cascade$cumulative_n,
 grDevices::dev.off()
 
 cat(sprintf("primary_rows=%d\n", nrow(primary)))
+cat(sprintf("full_text_pairs=%d\n", length(full_text_pair_ids)))
 cat(sprintf("cascade=%s\n", paste(cascade$cumulative_n, collapse = ",")))
 cat(sprintf("registered_agreement=%d/260\n", registered_agree))
 cat(sprintf("additional_agreement=%d/312\n", additional_agree))
