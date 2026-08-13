@@ -6,17 +6,18 @@ analyses: a landscape study of 83 source-target dataset pairs*.
 
 ## Contents
 
-- `analysis-data.csv`: the 83-pair primary coding grid and two prespecified
-  human reliability samples.
+- `analysis-data.csv`: the 83-pair primary coding grid, the prespecified
+  20-pair human reliability sample, and the post hoc 24-pair additional
+  reliability sample.
 - `codebook.md`: field definitions, allowed states, and decision rules.
 - `reproduce.R`: a base-R script that validates the data and regenerates the
   public result tables and main figure under `results/`.
 - `SHA256SUMS`: SHA-256 checksums for all other release files.
 
-The scientific coding and adjudication were performed manually by the research
-team. Deterministic scripts were used only for validation, aggregation,
-analysis, and figure generation. The two rater columns are anonymized role
-labels; adjudicated values do not replace the frozen pre-adjudication ratings.
+Research team members completed all scientific coding and adjudication. The
+included script validates and aggregates the coded data, performs the analyses,
+and generates the figure. The two rater columns are anonymized role labels;
+adjudicated values do not replace the pre-adjudication ratings.
 
 ## Reproduce
 
